@@ -41,3 +41,7 @@ true -> Boolean
 ## ¿Cómo comparo los arrays de Object?
 
 [Comparación en Java](./comparison_java.md)
+
+## ¿Cómo medir el tamano de un arrays?
+
+[saber tamano en java](./length_java.md)
