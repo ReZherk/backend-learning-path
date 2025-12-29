@@ -87,3 +87,15 @@ class Solution {
 3. **Detecta arrays anidados**: Usa `instanceof Object[]` para saber si un elemento es un array.
 4. **Aplica recursividad**: Si ambos elementos son arrays, llama a `compareArrays` recursivamente.
 5. **Compara valores simples**: Si no son arrays, usa `equals()` para comparar.
+
+## Solucion
+
+@. **[SOLUCION](../Ejercicios/compare-arrays-challenge.java)** - Se usara una solucional manual,pero si se quiere tambien se podria usar:
+
+```java
+import java.util.Arrays;
+
+public static boolean compareArrays(Object[] arrayA, Object[] arrayB) {
+    return Arrays.deepEquals(arrayA, arrayB);
+}
+```
