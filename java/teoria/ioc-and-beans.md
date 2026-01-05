@@ -212,6 +212,60 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 }
 ```
 
+## Clases de Configuración y Métodos @Bean
+
+Además de las anotaciones como `@Component`, `@Service` o `@Controller`, Spring ofrece otra forma de declarar Beans: las **clases de configuración**.
+
+### ¿Qué es `@Configuration`?
+
+- Es una anotación que marca una clase como **fuente de configuración**.
+- Esa clase en sí misma también es un **Bean administrado por Spring**.
+- Dentro de ella puedes definir métodos anotados con `@Bean` que crean y registran otros Beans en el contenedor.
+
+```java
+@Configuration
+public class AppConfig {
+
+    @Bean
+    public PatientService patientService() {
+        return new PatientService();
+    }
+
+    @Bean
+    public PatientController patientController(PatientService service) {
+        return new PatientController(service);
+    }
+}
+```
+
+### ¿Qué pasa aquí?
+
+1. `AppConfig` se convierte en un Bean dentro del **ApplicationContext**.
+2. Spring detecta los métodos `@Bean` y los trata como **fábricas de Beans**.
+3. Cuando se llama a `patientService()`, Spring intercepta la llamada (usando proxies) y asegura que:
+   - El objeto creado se registre en el contenedor.
+   - No se creen instancias duplicadas.
+   - Se respete el ciclo de vida bajo IoC.
+4. Si otro método `@Bean` necesita `PatientService`, Spring inyecta automáticamente la instancia ya creada.
+
+### Flujo simplificado
+
+```
+Spring Boot inicia
+    ↓
+Escanea clases (@ComponentScan)
+    ↓
+Encuentra @Configuration (AppConfig)
+    ↓
+Registra AppConfig como Bean
+    ↓
+Ejecuta métodos @Bean y guarda sus resultados
+    ↓
+Los registra en ApplicationContext
+    ↓
+Inyecta dependencias donde se necesitan
+```
+
 ## Resumen
 
 - **IoC** = Spring controla la creación y gestión de objetos
@@ -220,3 +274,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 - **No usar `new`** para crear Beans, Spring lo hace por ti
 - **Constructor Injection** es la mejor práctica para inyectar dependencias
 - Los **Filters** y componentes de **Spring Security** funcionan así
+- `@Configuration` = clase especial que define Beans.
+- Métodos `@Bean` = fábricas de objetos que Spring administra.
+- Spring intercepta las llamadas para garantizar que todo esté bajo IoC y DI.
