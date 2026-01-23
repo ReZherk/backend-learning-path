@@ -17,6 +17,8 @@ Todas estas heredan de la clase Object, esto le permite compartir métodos en co
 - `getClass()`
 - etc.
 
+-
+
 ## ¿Qué significa que son primitivos?
 
 Es que estos no tienen métodos y no heredan de ninguna otra clase (como Object).
