@@ -16,7 +16,7 @@ Un objeto es una colección no ordenada de propiedades, donde cada propiedad es 
 - Los valores pueden ser de cualquier tipo de dato
 - Mutable (puede modificarse después de crearse)
 - Existe en memoria durante la ejecución
-- Las claves pueden ser strings o símbolos
+- Las claves pueden ser strings o símbolos.
 
 ### Creación de objetos
 
