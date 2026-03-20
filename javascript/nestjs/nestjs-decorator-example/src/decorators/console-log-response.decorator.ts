@@ -1,43 +1,46 @@
-import { AppController } from 'src/app.controller';
-
-export function ConsoleLogResponse() {
+export function ConsoleLogResponse(): MethodDecorator {
   return (
-    target: unknown,
-    propertyKey: string,
-    propertyDescriptor: PropertyDescriptor,
-  ) => {
-    const originalMethod: (...args: unknown[]) => Promise<unknown> =
-      propertyDescriptor.value as (...args: unknown[]) => Promise<unknown>;
+    target: object,
+    propertyKey: string | symbol,
+    descriptor: PropertyDescriptor,
+  ): PropertyDescriptor => {
+    const originalMethod = descriptor.value as (...args: unknown[]) => unknown;
 
-    propertyDescriptor.value = async function (
-      this: AppController,
+    descriptor.value = async function (
+      this: Record<string, unknown>,
       ...args: unknown[]
     ): Promise<unknown> {
-      console.log('Accediendo al controlador:', this);
+      const now = Date.now();
 
-      if (args) {
-        console.log(this.texto);
+      console.log(`➡️ Ejecutando método: ${String(propertyKey)}`);
+      console.log('📥 Argumentos:', args);
+
+      if ('texto' in this) {
+        console.log('📌 texto antes:', this['texto']);
+        this['texto'] = 'modificado desde decorador';
+        console.log('📌 texto después:', this['texto']);
       }
 
-      console.log(
-        'Aqui veremos lo  que hay dentro del  metodo  original',
-        originalMethod,
-      );
+      try {
+        const result: unknown = originalMethod.call(this, ...args);
 
-      console.log(
-        'Aqui veremos cuantos argumentos les llega:',
-        args.length,
-        'y que hay dentro:',
-        args,
-      );
+        if (result instanceof Promise) {
+          const resolved: unknown = await result;
+          console.log('✅ Response:', resolved);
+          console.log(`⏱ Tiempo: ${Date.now() - now}ms`);
+          return resolved;
+        }
 
-      const result: unknown = await originalMethod.call(this, ...args);
-
-      console.log('Response:', result);
-
-      return result;
+        console.log('✅ Response:', result);
+        console.log(`⏱ Tiempo: ${Date.now() - now}ms`);
+        return result;
+      } catch (error: unknown) {
+        console.error('❌ Error:', error);
+        console.log(`⏱ Tiempo (error): ${Date.now() - now}ms`);
+        throw error;
+      }
     };
 
-    return propertyDescriptor;
+    return descriptor;
   };
 }
