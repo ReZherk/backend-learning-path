@@ -1,0 +1,55 @@
+generator client {
+  provider = "prisma-client"
+  output="../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model User {
+  id        String  @id @default(uuid())
+  name      String
+  isActive  Boolean @default(true)
+  teamId    String?
+
+  team      Team?   @relation(fields: [teamId], references: [id])
+  account   Account?
+  notas     Nota[]
+
+  createdAt DateTime @default(now())
+}
+
+model Account {
+  id       String @id @default(uuid())
+  email    String @unique
+  password String
+  role     Role
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id])
+}
+
+model Nota {
+  id        String   @id @default(uuid())
+  titulo    String
+  contenido String
+
+  userId String
+  user   User @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+model Team {
+  id    String @id @default(uuid())
+  name  String
+
+  users User[]
+}
+
+enum Role {
+  ADMIN
+  EDITOR
+  LECTOR
+}
